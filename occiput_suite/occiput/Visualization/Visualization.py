@@ -23,7 +23,9 @@ class InstallationError(Exception):
 
 
 class ProgressBar():
-    def __init__(self, height='6px', width='100%%', background_color=C.LIGHT_BLUE, foreground_color=C.BLUE):
+    def __init__(self, height='20', width='500', background_color=C.LIGHT_BLUE,
+                 foreground_color=C.BLUE, text_color = C.LIGHT_GRAY, title = "processing ..."):
+        self._inner_width = numpy.int(width)-20
         self._percentage = 0.0
         self._divid = str(uuid.uuid4())
         self.visible = False
@@ -33,10 +35,11 @@ class ProgressBar():
             self.set_display_mode("text")
         self._pb = HTML(
             """
-            <div style="border: 1px solid white; width:%s; height:%s; background-color:%s">
-                <div id="%s" style="background-color:%s; width:0%%; height:%s"> </div>
+            <div>%s</div>
+            <div style="border: 1px solid white; width:%spx; height:%s; background-color:%s; color:%s; font-weight:bold; ">
+                <div id="%s" style="background-color:%s; width:0px; height:%spx;"> %s </div>
             </div> 
-            """ % (width, height, background_color, self._divid, foreground_color, height))
+            """ % (title, width, height, background_color, text_color, self._divid, foreground_color, height, str(self._percentage)))
 
     def show(self):
         if self.mode == "ipynb":
@@ -57,8 +60,12 @@ class ProgressBar():
         self._percentage = percentage
         if self.mode == "ipynb":
             display(Javascript("$('div#%s').width('%i%%')" % (self._divid, percentage)))
+            display(Javascript("$('div#%s').text('%s')" % (self._divid, str(percentage))))
         else:
             print("%2.1f / 100" % percentage)
+
+    def get_percentage(self):
+        return self._percentage
 
     def get_percentage(self):
         return self._percentage

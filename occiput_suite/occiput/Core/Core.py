@@ -4,7 +4,7 @@
 # Dec. 2014, Boston, MA 
 # April. 2014, Boston, MA
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 import copy
 import json
 
@@ -786,7 +786,7 @@ class Image3D(ImageND):
                     return out
                 else:
                     # FIXME: implement
-                    print(
+                    raise(
                         "DIV of images on different grids; the right hand side image must be resampled, please implement this.")
             else:
                 # FIXME: raise error 
@@ -795,7 +795,25 @@ class Image3D(ImageND):
             out = self.copy()
             out.data = out.data / other
             return out
-        return None
+
+    def __truediv__(self, other):
+        if self._is_same_type(other):
+            if self._is_in_same_space(other):
+                if self._is_on_same_grid(other):
+                    out = self.copy()
+                    out.data = out.data / other.data
+                    return out
+                else:
+                    # FIXME: implement
+                    raise(
+                        "DIV of images on different grids; the right hand side image must be resampled, please implement this.")
+            else:
+                # FIXME: raise error
+                raise ("DIV of images not in the same space. It cannot be done. ")
+        else:
+            out = self.copy()
+            out.data = out.data / other
+            return out
 
     def __radd_(self, other):
         return self.__add__(other)

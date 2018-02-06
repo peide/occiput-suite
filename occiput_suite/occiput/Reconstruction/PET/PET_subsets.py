@@ -69,7 +69,7 @@ class SubsetGenerator:
         if subset_size >= self._N_axial * self._N_azimu:
             return self.all_active()
         M = zeros((self._N_azimu, self._N_axial), dtype=uint32, order="C")
-        for i in range(self._index, self._N_axial, self._N_axial / subset_size):
+        for i in range(self._index, self._N_axial, self._N_axial // subset_size):
             if azimuthal_range is None:
                 M[:, i] = 1
             else:

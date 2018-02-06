@@ -3,7 +3,7 @@
 # Harvard University, Martinos Center for Biomedical Imaging
 # Dec. 2013, Boston, MA
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 
 __all__ = ["Core", "Classification", "DataSources", "Reconstruction", "Registration", "Transformation", "Visualization"]
 
@@ -16,6 +16,7 @@ from . import Transformation
 from . import Visualization
 
 from . import global_settings
+from numpy import *
 
 def __set_ipython_logo():
     from IPython.display import display, HTML

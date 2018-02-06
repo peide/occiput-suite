@@ -1451,9 +1451,9 @@ class PET_Static_Scan():
                             SaveAll=False, KineticPrior=False, SaveDisk=False,
                             savepath=""):
 
-        progress_bar = ProgressBar()
         if show_progressbar:
-            progress_bar.set_percentage(0.1)
+            progress_bar = ProgressBar(title="Reconstruction progress ...")
+            progress_bar.set_percentage(0.0)
 
         if activity is None:
             activity = self._make_Image3D_activity(ones(self.activity_shape, dtype=float32, order="F"))
@@ -1471,15 +1471,16 @@ class PET_Static_Scan():
 
         self.profiler.reset()
         for i in range(iterations):
-            if iterations >= 15:
-                if i == iterations - 1:
+            if not show_progressbar:
+                if iterations >= 15:
+                    if i == iterations - 1:
+                        print("iteration ", (i + 1), "/", iterations)
+                    elif i + 1 == 1:
+                        print("iteration ", (i + 1), "/", iterations)
+                    elif (int32(i + 1) / 5) * 5 == i + 1:
+                        print("iteration ", (i + 1), "/", iterations)
+                else:
                     print("iteration ", (i + 1), "/", iterations)
-                elif i + 1 == 1:
-                    print("iteration ", (i + 1), "/", iterations)
-                elif (int32(i + 1) / 5) * 5 == i + 1:
-                    print("iteration ", (i + 1), "/", iterations)
-            else:
-                print("iteration ", (i + 1), "/", iterations)
 
             subsets_matrix = subsets_generator.new_subset(subset_mode, subset_size, azimuthal_range)
             # TODO : introduce OSL prior into osem_step
@@ -1499,6 +1500,8 @@ class PET_Static_Scan():
                 # call kinetic model fitter module
                 # update activity before next iteration
                 pass
+            if show_progressbar:
+                progress_bar.set_percentage((i + 1) * 100.0 / iterations)
 
         if SaveAll:
             return activity, activity_all
@@ -1864,6 +1867,10 @@ class PET_Multi2D_Scan(PET_Static_Scan):
                             subset_size=64, transformation=None, azimuthal_range=None, show_progressbar=True,
                             SaveAll=False, KineticPrior=False, SaveDisk=False, savepath=""):
 
+        if show_progressbar:
+            progress_bar = ProgressBar(title="Reconstruction progress ...")
+            progress_bar.set_percentage(0.0)
+
         if activity is None:
             activity = self._make_Image3D_activity(ones(self.activity_shape, dtype=float32, order="F"))
 
@@ -1880,15 +1887,16 @@ class PET_Multi2D_Scan(PET_Static_Scan):
 
         self.profiler.reset()
         for i in range(iterations):
-            if iterations >= 15:
-                if i == iterations - 1:
+            if not show_progressbar:
+                if iterations >= 15:
+                    if i == iterations - 1:
+                        print("iteration ", (i + 1), "/", iterations)
+                    elif i + 1 == 1:
+                        print("iteration ", (i + 1), "/", iterations)
+                    elif (int32(i + 1) / 5) * 5 == i + 1:
+                        print("iteration ", (i + 1), "/", iterations)
+                else:
                     print("iteration ", (i + 1), "/", iterations)
-                elif i + 1 == 1:
-                    print("iteration ", (i + 1), "/", iterations)
-                elif (int32(i + 1) / 5) * 5 == i + 1:
-                    print("iteration ", (i + 1), "/", iterations)
-            else:
-                print("iteration ", (i + 1), "/", iterations)
 
             subsets_matrix = subsets_generator.new_subset(subset_mode, subset_size, azimuthal_range)
             # TODO : introduce OSL prior into osem_step
@@ -1907,6 +1915,7 @@ class PET_Multi2D_Scan(PET_Static_Scan):
                 # call kinetic model fitter module
                 # update activity before next iteration
                 pass
+            progress_bar.set_percentage((i + 1) * 100.0 / iterations)
 
         if SaveAll:
             return activity, activity_all
@@ -2623,6 +2632,10 @@ class PET_Dynamic_Scan(PET_Static_Scan):
                             subset_size=64, transformations=None, azimuthal_range=None, show_progressbar=True,
                             SaveAll=False, KineticPrior=False, SaveDisk=False, savepath=""):
 
+        if show_progressbar:
+            progress_bar_slice = ProgressBar(title="Frames stack ...")
+            progress_bar_slice.set_percentage(0.0)
+
         """Iterates through various time frames and reconstruct each one of them as a PET_Static_Scan object """
         for frame in range(len(self)):
             if activity is not None:
@@ -2636,12 +2649,15 @@ class PET_Dynamic_Scan(PET_Static_Scan):
                 transformation = transformations[frame]
             else:
                 transformation = None
-            print("Reconstructing frame %d / %d" % (frame + 1, len(self)))
             activity_recon = self[frame].osem_reconstruction(iterations=iterations, activity=activity_init,
                                                              attenuation_projection=attenuation_projection,
                                                              subset_mode=subset_mode, subset_size=subset_size,
                                                              transformation=transformation, azimuthal_range=None)
             self[frame].activity = activity_recon
+            if show_progressbar:
+                progress_bar_slice.set_percentage((frame + 1) * 100.0 / (len(self)))
+            else:
+                print("Reconstructing frame %d / %d" % (frame + 1, len(self)))
 
     def direct_reconstruction(self, iterations=10, activity=None, attenuation_projection=None, subset_mode="random",
                               subset_size=64, transformations=None, azimuthal_range=None, gradient_prior_type=None,
@@ -2698,27 +2714,34 @@ class PET_Dynamic_Scan(PET_Static_Scan):
                 # TODO : here is where you need to fit the volume using kinetic model
 
     def osem_reconstruction_4D(self, iterations=10, activity=None, subset_mode="random", subset_size=64,
-                               transformations=None):
+                               transformations=None, show_progressbar=True, ):
+        if show_progressbar:
+            progress_bar_slice = ProgressBar(title="Current iteration ...")
+            progress_bar_slice.set_percentage(0.0)
+
         if activity is None:
             activity = self._make_Image3D_activity(ones(self.activity_shape, dtype=float32, order="F"))
 
-        if self.sensitivity is None:
-            self.set_sensitivity(1.0)
+        """if self.sensitivity is None:
+            self.set_sensitivity(1.0)"""
 
         subsets_generator = SubsetGenerator(self.binning.N_azimuthal, self.binning.N_axial)
 
         for i in range(iterations):
-            if iterations >= 15:
-                if i == 1:
-                    print(i, "/", iterations)
-                elif i == iterations - 1:
-                    print(i, "/", iterations)
-                elif (int32(i) / 5) * 5 == i:
-                    print(i, "/", iterations)
-            else:
-                print(i, "/", iterations)
+            if not show_progressbar:
+                if iterations >= 15:
+                    if i == 1:
+                        print(i, '/', iterations)
+                    elif i == iterations - 1:
+                        print(i, '/', iterations)
+                    elif (int32(i) / 5) * 5 == i:
+                        print(i, '/', iterations)
+                else:
+                    print(i, '/', iterations)
 
             activity = self.osem_step_4D(activity, subsets_generator, subset_mode, subset_size, transformations)
+            if show_progressbar:
+                progress_bar_slice.set_percentage((i + 1) * 100.0 / iterations)
         return activity
 
     def osem_step_4D(self, activity, subsets_generator, subset_mode="random", subset_size=64, transformations=None):

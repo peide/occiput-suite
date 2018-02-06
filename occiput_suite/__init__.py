@@ -2,7 +2,7 @@
 # University of Pisa
 # 2015 - 2018, Pisa, IT
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function, division
 
 __all__= ["DisplayNode", "ilang", "interfile", "NiftyPy", "occiput", "petlink", "simplewrap"]
 

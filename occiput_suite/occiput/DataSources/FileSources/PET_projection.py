@@ -75,7 +75,7 @@ def import_interfile_projection(headerfile, binning, michelogram, datafile='', i
 
     N_azim = michelogram.n_segments
     z_elements = int32([michelogram.segments_sizes[0]])
-    for i in range((N_azim - 1) / 2):
+    for i in range((N_azim - 1) // 2):
         z_elements = concatenate(
             [z_elements, int32([michelogram.segments_sizes[i + 1], michelogram.segments_sizes[i + 1]])])
 
@@ -137,7 +137,7 @@ def export_interfile_projection(sinogram_data_file, projection_data, binning, mi
 
     N_azim = michelogram.n_segments
     z_elements = int32([michelogram.segments_sizes[0]])
-    for i in range((N_azim - 1) / 2):
+    for i in range((N_azim - 1) // 2):
         z_elements = concatenate(
             [z_elements, int32([michelogram.segments_sizes[i + 1], michelogram.segments_sizes[i + 1]])])
     indexes_azim = [5, 6, 4, 7, 3, 8, 2, 9, 1, 10, 0]

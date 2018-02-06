@@ -26,8 +26,35 @@ try:
     from setuptools import setup, Extension
 except ImportError:
     from distutils.core import setup, Extension
+
 import os
+import sysconfig
+import sys
 from glob import glob
+
+from Cython.Build import cythonize, build_ext
+from Cython.Distutils import build_ext
+
+def get_ext_filename_without_platform_suffix(filename):
+    name, ext = os.path.splitext(filename)
+    ext_suffix = sysconfig.get_config_var('EXT_SUFFIX')
+
+    if ext_suffix == ext:
+        return filename
+
+    ext_suffix = ext_suffix.replace(ext, '')
+    idx = name.find(ext_suffix)
+
+    if idx == -1:
+        return filename
+    else:
+        return name[:idx] + ext
+
+
+class BuildExtWithoutPlatformSuffix(build_ext):
+    def get_ext_filename(self, ext_name):
+        filename = super().get_ext_filename(ext_name)
+        return get_ext_filename_without_platform_suffix(filename)
 
 petlink32_c_module = Extension('occiput_suite.petlink.petlink32_c',
                                [os.path.join('occiput_suite', 'petlink', 'petlink32_c.c')])
@@ -35,6 +62,11 @@ test_simplewrap_module = Extension('occiput_suite.simplewrap.tests.test_simplewr
                                    [os.path.join('occiput_suite', 'simplewrap', 'tests', 'test_simplewrap_c.c')])
 test_matrices_module = Extension('occiput_suite.simplewrap.tests.test_matrices_c',
                                  [os.path.join('occiput_suite', 'simplewrap', 'tests', 'test_matrices_c.c')])
+
+if sys.version_info >= (3,0):
+    build_ext_fun = BuildExtWithoutPlatformSuffix
+else:
+    build_ext_fun = build_ext
 
 setup(
     name='occiput_suite',
@@ -70,6 +102,7 @@ setup(
         (os.path.join('occiput_suite', 'DisplayNode', 'static', 'tipix', 'images'),
          glob(os.path.join('occiput_suite', 'DisplayNode', 'static', 'tipix', 'images', '*.*')))],
     package_data={'occiput_suite.occiput': ['Data/*.pdf','Data/*.png','Data/*.jpg','Data/*.svg','Data/*.nii','Data/*.dcm','Data/*.h5','Data/*.txt','Data/*.dat']},
+    cmdclass={'build_ext': build_ext_fun},
     ext_modules=[petlink32_c_module, test_simplewrap_module, test_matrices_module],
     url='https://github.com/mscipio/occiput-suite',
     license='LICENSE.txt',

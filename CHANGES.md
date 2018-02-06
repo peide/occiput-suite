@@ -1,6 +1,18 @@
 # Changelog
 
 ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
+[**v1.1.0**] - **06 Feb 2018**
+![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
+### Occiput 1.1.0 is merged into a new module called Occiput-suite
+
+- occiput-suites now containts all occiput's dependencies so to keep everything updated and consistent
+- occiput is now compatible with **Python up to 3.6.4**: further testing is required, but it seems to be working fine, being still backward compatible with python 2.7.11 systems
+- minor changes: now the beatiful ProgresBar() class is back to work!
+- Updated version of example notebooks (still a work in progress)
+
+---
+
+![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
 [**v1.1.0**] - **22-Sep-2017**
 ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
 ### Many changes to a stable 1.1.0 version by ***Michele Scipioni***
@@ -20,7 +32,6 @@
     + improve printed output of iteration number (visual feedback)
     + add a secondary output with stored the intermediate images after each OS-EM iteration(*mainly testing purposes*)
     + add a boolean flag that enable saving on disk of the output of each iteration (*mainly testing purposes*)
-
 
 ---
 ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)

@@ -49,7 +49,7 @@ class Michelogram:
 
     def _make(self):
         n_rings = self.n_rings
-        n_rings_small = self.span / 2
+        n_rings_small = self.span // 2
         n_rings_large = n_rings_small + 1
         if self.span > 1:
             n_segments_per_side = (self.max_ring_difference + 1 - self.span / 2) / self.span
@@ -75,9 +75,9 @@ class Michelogram:
 
         if self.span > 1:
             # -1- right sinograms  
-            sinogram_index = int(n_segments) / 2
+            sinogram_index = int(n_segments) // 2
             for X in range(0, self.max_ring_difference, self.span):
-                if sinogram_index == int(n_segments) / 2:
+                if sinogram_index == int(n_segments) // 2:
                     plane_index_offset = -n_rings_small
                 else:
                     plane_index_offset = 0
@@ -85,30 +85,30 @@ class Michelogram:
                 sinogram_index += 1
 
             # -2- left sinograms 
-            sinogram_index = int(n_segments) / 2 - 1
+            sinogram_index = int(n_segments) // 2 - 1
             for Y in range(n_rings_large, self.max_ring_difference, self.span):
                 plane_index_offset = 0
                 self._fill_michelogram(0, Y, sinogram_index, plane_index_offset)
                 sinogram_index -= 1
         else:
             # -1- right sinograms 
-            for seg in range((self.n_segments + 1) / 2):
+            for seg in range((self.n_segments + 1) // 2):
                 for y in range(self.segments_sizes[seg]):
                     x = y + seg
-                    self.michelogram_sinogram[x, y] = seg + (self.n_segments + 1) / 2 - 1
+                    self.michelogram_sinogram[x, y] = seg + (self.n_segments + 1) // 2 - 1
                     self.michelogram_plane[x, y] = y
             # -2- left sinograms 
-            for seg in range((self.n_segments + 1) / 2):
+            for seg in range((self.n_segments + 1) // 2):
                 for x in range(self.segments_sizes[seg]):
                     y = x + seg
-                    self.michelogram_sinogram[x, y] = (self.n_segments + 1) / 2 - seg - 1
+                    self.michelogram_sinogram[x, y] = (self.n_segments + 1) // 2 - seg - 1
                     self.michelogram_plane[x, y] = x
 
     def _verify_max_ring_difference(self, span, n_rings, max_ring_difference):
         return max_ring_difference in self._compatible_max_ring_differences(span, n_rings)
 
     def _compatible_max_ring_differences(self, span, n_rings):
-        c = [span / 2]
+        c = [span // 2]
         while True:
             cnew = c[-1] + span
             if cnew < n_rings:
@@ -126,7 +126,7 @@ class Michelogram:
 
     def _fill_michelogram(self, x_start, y_start, sinogram_index, plane_index_offset):
         n_rings = self.n_rings
-        n_rings_small = self.span / 2
+        n_rings_small = self.span // 2
         n_rings_large = n_rings_small + 1
         for X in range(n_rings + n_rings_small):
             # long line

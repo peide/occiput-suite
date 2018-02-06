@@ -106,12 +106,26 @@ elif platform.system() == 'Darwin':
 elif platform.system() == 'Windows':
 
     sep = ";"
-if os.environ.has_key('LD_LIBRARY_PATH'):
-    niftyreg_lib_paths = niftyreg_lib_paths + os.environ['LD_LIBRARY_PATH'].split(sep)
-if os.environ.has_key('DYLD_LIBRARY_PATH'):
-    niftyreg_lib_paths = niftyreg_lib_paths + os.environ['DYLD_LIBRARY_PATH'].split(sep)
-if os.environ.has_key('PATH'):
-    niftyreg_lib_paths = niftyreg_lib_paths + os.environ['PATH'].split(sep)
+try:
+    if os.environ.has_key('LD_LIBRARY_PATH'):
+        niftyreg_lib_paths = niftyreg_lib_paths + os.environ['LD_LIBRARY_PATH'].split(sep)
+except:
+    if 'LD_LIBRARY_PATH' in os.environ:
+        niftyreg_lib_paths = niftyreg_lib_paths + os.environ['LD_LIBRARY_PATH'].split(sep)
+
+try:
+    if os.environ.has_key('DYLD_LIBRARY_PATH'):
+        niftyreg_lib_paths = niftyreg_lib_paths + os.environ['DYLD_LIBRARY_PATH'].split(sep)
+except:
+    if 'DYLD_LIBRARY_PATH' in os.environ:
+        niftyreg_lib_paths = niftyreg_lib_paths + os.environ['DYLD_LIBRARY_PATH'].split(sep)
+
+try:
+    if os.environ.has_key('PATH'):
+        niftyreg_lib_paths = niftyreg_lib_paths + os.environ['PATH'].split(sep)
+except:
+    if 'PATH' in os.environ:
+        niftyreg_lib_paths = niftyreg_lib_paths + os.environ['PATH'].split(sep)
 
 (found, fullpath, path) = find_c_library(library_name, niftyreg_lib_paths)
 if found == NOT_FOUND:

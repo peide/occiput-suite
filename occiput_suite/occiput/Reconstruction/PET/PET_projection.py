@@ -125,7 +125,7 @@ class Binning():
         table_data = [['N_axial', self.N_axial], ['N_azimuthal', self.N_azimuthal], ['Size_u', self.size_u],
                       ['Size_v', self.size_v], ['N_u', self.N_u], ['N_v', self.N_v]]
         N_per_row = 12
-        for i in range(len(self.angles_azimuthal) / N_per_row + 1):
+        for i in range(len(self.angles_azimuthal) // N_per_row + 1):
             i_start = i * N_per_row
             i_end = (i + 1) * N_per_row
             if i_end >= len(self.angles_azimuthal):
@@ -645,7 +645,17 @@ class PET_Projection():
         out.data = out.data * other
         return out
 
-    def __div__(self, other):
+    """def __div__(self, other):
+        #Overload the '/' (division) operator.
+        if other is None:  # This makes reconstruction code cleaner, when e.g. scatter and randoms are not specified
+            return self
+        if self._is_same_sparsity_(other):
+            other = other.data
+        out = self.copy()
+        out.data = out.data / other
+        return out"""
+
+    def __truediv__(self, other):
         """Overload the '/' (division) operator. """
         if other is None:  # This makes reconstruction code cleaner, when e.g. scatter and randoms are not specified
             return self

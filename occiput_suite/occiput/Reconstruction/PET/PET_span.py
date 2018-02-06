@@ -15,7 +15,7 @@
 # For compatibility, however, occiput can deal with the conventional meshing technique. 
 # The code for conventional meshing is here. 
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 from numpy import int32, ones, zeros
 
 from ...Visualization.Visualization import svgwrite, has_svgwrite
@@ -35,7 +35,7 @@ class Michelogram:
     def _make(self):
         if not self._verify_max_ring_difference():
             print("Michelogram: Maximum ring difference is not consistent with span. ")
-        n_sinograms_per_side = (self.max_ring_difference + 1 - self.span / 2) / self.span
+        n_sinograms_per_side = (self.max_ring_difference + 1 - self.span // 2) // self.span
         n_sinograms = n_sinograms_per_side * 2 + 1
         n_planes = zeros([n_sinograms_per_side + 1, ], dtype=int32)
         n_planes[0] = 2 * self.n_rings - 1
@@ -50,7 +50,7 @@ class Michelogram:
 
         # -2- right sinograms  
         sinogram_index = 0
-        n_rings_small = self.span / 2
+        n_rings_small = self.span // 2
         n_rings_large = n_rings_small + 1
         for X in range(0, self.max_ring_difference, self.span):
             if sinogram_index == 0:
@@ -74,7 +74,7 @@ class Michelogram:
 
     def _fill_michelogram(self, x_start, y_start, sinogram_index, plane_index_offset):
         n_rings = self.n_rings
-        n_rings_small = self.span / 2
+        n_rings_small = self.span // 2
         n_rings_large = n_rings_small + 1
         for X in range(n_rings + n_rings_small):
             # long line

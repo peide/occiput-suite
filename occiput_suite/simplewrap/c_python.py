@@ -69,13 +69,12 @@ FOUND_NOT_LOADABLE = 2
 def find_c_library(library_name, paths=('./')):
     for path in paths:
         (exists, fullpath) = exists_c_library(library_name, path)
-        # print path, exists, fullpath
         if exists:
             if isloadable_c_library(fullpath):
                 return FOUND, fullpath, path
             else:
                 return FOUND_NOT_LOADABLE, fullpath, path
-    return NOT_FOUND, None, None
+    #return NOT_FOUND, None, None
 
 
 def load_c_library(fullpath):
@@ -136,8 +135,12 @@ def call_c_function(c_function, descriptor):
         arg = d['value']
         if argtype == 'string':
             if arg is None:
-                if not d.has_key('size'):
-                    raise DescriptorError("'string' with 'value'='None' must have 'size' property. ")
+                try:
+                    if not d.has_key('size'):
+                        raise DescriptorError("'string' with 'value'='None' must have 'size' property. ")
+                except:
+                    if 'size' not in d:
+                        raise DescriptorError("'string' with 'value'='None' must have 'size' property. ")
                 arg = ' ' * size
             arg_c = c_char_p(arg)
         elif argtype == 'int':
@@ -162,32 +165,63 @@ def call_c_function(c_function, descriptor):
             arg_c = pointer(arg)
         elif argtype == 'array':
             if arg is None:
-                if not d.has_key('size'):
-                    raise DescriptorError("'array' with 'value'='None' must have 'size' property. ")
-                if not d.has_key('dtype'):
-                    raise DescriptorError("'array' with 'value'='None' must have 'dtype' property. ")
-                if d.has_key('order'):
-                    order = d['order']
-                    if not order in ["C", "A", "F", None]:
-                        raise DescriptorError(
-                            "'order' property of type 'array' must be 'C' (C array order),'F' (Fortran array order), 'A' (any order, let numpy decide) or None (any order, let numpy decide) ")
-                else:
-                    order = None
+                try:
+                    if not d.has_key('size'):
+                        raise DescriptorError("'array' with 'value'='None' must have 'size' property. ")
+                except:
+                    if 'size' not in d:
+                        raise DescriptorError("'array' with 'value'='None' must have 'size' property. ")
+
+                try:
+                    if not d.has_key('dtype'):
+                        raise DescriptorError("'array' with 'value'='None' must have 'dtype' property. ")
+                except:
+                    if 'dtype' not in d:
+                        raise DescriptorError("'array' with 'value'='None' must have 'dtype' property. ")
+
+                try:
+                    if d.has_key('order'):
+                        order = d['order']
+                        if not order in ["C", "A", "F", None]:
+                            raise DescriptorError(
+                                "'order' property of type 'array' must be 'C' (C array order),'F' (Fortran array order), 'A' (any order, let numpy decide) or None (any order, let numpy decide) ")
+                    else:
+                        order = None
+                except:
+                    if 'order' in d:
+                        order = d['order']
+                        if not order in ["C", "A", "F", None]:
+                            raise DescriptorError(
+                                "'order' property of type 'array' must be 'C' (C array order),'F' (Fortran array order), 'A' (any order, let numpy decide) or None (any order, let numpy decide) ")
+
+                    else:
+                        order = None
                 arg = zeros(d['size'], dtype=d['dtype'], order=order)
                 # If variable is given (not None) and dtype is specified, change the dtype of the given array if not consistent
             # This also converts lists and tuples to numpy arrays if the given variable is not a numpy array. 
             else:
-                if d.has_key('dtype'):
-                    dtype = d['dtype']
-                    arg = dtype(arg)
-                if d.has_key('order'):
-                    arg = asarray(arg, order=d['order'])
+                try:
+                    if d.has_key('dtype'):
+                        dtype = d['dtype']
+                        arg = dtype(arg)
+                    if d.has_key('order'):
+                        arg = asarray(arg, order=d['order'])
+                except:
+                    if 'dtype' in d:
+                        dtype = d['dtype']
+                        arg = dtype(arg)
+                    if 'order' in d:
+                        arg = asarray(arg, order=d['order'])
             arg_c = arg.ctypes.data_as(POINTER(c_void_p))
         elif argtype == 'function':
             if arg is None:
                 raise DescriptorError("For 'function' type, 'value' must be a function. ")
-            if not d.has_key('arg_types'):
-                raise DescriptorError("For 'function' type, 'arg_types' must be specified. ")
+            try:
+                if not d.has_key('arg_types'):
+                    raise DescriptorError("For 'function' type, 'arg_types' must be specified. ")
+            except:
+                if 'arg_types' not in d:
+                    raise DescriptorError("For 'function' type, 'arg_types' must be specified. ")
             arg_types = []
             for t in d['arg_types']:
                 if t == 'int':
@@ -217,17 +251,30 @@ def call_c_function(c_function, descriptor):
             args[i] = args[i].value
         # swap axes of array if requested
         if descriptor[i]['type'] == 'array':
-            if descriptor[i].has_key('swapaxes'):
-                # 1) reshape
-                shape = args[i].shape
-                shape2 = list(shape)
-                shape = copy.copy(shape2)
-                shape[descriptor[i]['swapaxes'][0]] = shape2[descriptor[i]['swapaxes'][1]]
-                shape[descriptor[i]['swapaxes'][1]] = shape2[descriptor[i]['swapaxes'][0]]
-                args[i] = args[i].reshape(shape)
-                # 2) swap axes
-                args[i] = args[i].swapaxes(descriptor[i]['swapaxes'][0], descriptor[i]['swapaxes'][1])
-                # Assemble wrapper object
+            try:
+                if descriptor[i].has_key('swapaxes'):
+                    # 1) reshape
+                    shape = args[i].shape
+                    shape2 = list(shape)
+                    shape = copy.copy(shape2)
+                    shape[descriptor[i]['swapaxes'][0]] = shape2[descriptor[i]['swapaxes'][1]]
+                    shape[descriptor[i]['swapaxes'][1]] = shape2[descriptor[i]['swapaxes'][0]]
+                    args[i] = args[i].reshape(shape)
+                    # 2) swap axes
+                    args[i] = args[i].swapaxes(descriptor[i]['swapaxes'][0], descriptor[i]['swapaxes'][1])
+                    # Assemble wrapper object
+            except:
+                if 'swapaxes' in descriptor[i]:
+                    # 1) reshape
+                    shape = args[i].shape
+                    shape2 = list(shape)
+                    shape = copy.copy(shape2)
+                    shape[descriptor[i]['swapaxes'][0]] = shape2[descriptor[i]['swapaxes'][1]]
+                    shape[descriptor[i]['swapaxes'][1]] = shape2[descriptor[i]['swapaxes'][0]]
+                    args[i] = args[i].reshape(shape)
+                    # 2) swap axes
+                    args[i] = args[i].swapaxes(descriptor[i]['swapaxes'][0], descriptor[i]['swapaxes'][1])
+                    # Assemble wrapper object
 
     class CallResult():
         pass
