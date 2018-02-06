@@ -1,9 +1,9 @@
 # Changelog
 
 ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
-[**v1.1.0**] - **06 Feb 2018**
+[**v1.1.1 --> v0.5.0**] - **06 Feb 2018**
 ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
-### Occiput 1.1.0 is merged into a new module called Occiput-suite
+### Occiput 1.1.1 is merged into a new module called Occiput-suite 0.5.0
 
 - occiput-suites now containts all occiput's dependencies so to keep everything updated and consistent
 - occiput is now compatible with **Python up to 3.6.4**: further testing is required, but it seems to be working fine, being still backward compatible with python 2.7.11 systems
