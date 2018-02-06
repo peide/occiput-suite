@@ -5,9 +5,9 @@
 ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
 ### Occiput 1.1.1 is merged into a new module called Occiput-suite 0.5.0
 
-- occiput-suites now containts all occiput's dependencies so to keep everything updated and consistent
+- ***occiput-suites*** now containts *all occiput's dependencies* so to keep everything updated and consistent
 - occiput is now compatible with **Python up to 3.6.4**: further testing is required, but it seems to be working fine, being still backward compatible with python 2.7.11 systems
-- minor changes: now the beatiful ProgresBar() class is back to work!
+- *minor changes*: now the beatiful ***ProgressBar()*** class is back to work!
 - Updated version of example notebooks (still a work in progress)
 
 ---
