@@ -1,6 +1,6 @@
-==========================================
-Occiput - Tomographic Vision - version 1.1
-==========================================
+=======================================================
+Occiput - Suite for Tomographic Vision - version 0.5
+=======================================================
 
 Tomographic reconstruction software for PET, PET-MRI and SPECT in 2D, 3D (volumetric) and 4D (spatio-temporal) in Python.
 
@@ -30,7 +30,7 @@ Pre-requisites: Occiput requires ``NVidia GPU Drivers``, ``NVidia CUDA`` and the
 
 1. `Install NVidia GPU Drivers and CUDA <https://developer.nvidia.com/cuda-downloads>`_
 
-2. `Install NiftyRec libraries <http://niftyrec.scienceontheweb.net>`_ - build the latest version using CMake
+2. `Install NiftyRec libraries <https://github.com/mscipio/NiftyRec>`_ - build the latest version using CMake
 
 3. Make sure that CUDA libraries and NiftyRec libraries are in the system path:
 
@@ -46,27 +46,26 @@ Pre-requisites: Occiput requires ``NVidia GPU Drivers``, ``NVidia CUDA`` and the
 
     setx path "%path%;c:/path_to_cuda_libraries:/path_to_niftyrec_libraries;"
 
-4. Install ``Occiput``:
+4. Install ``Occiput Suite``:
 
-    git clone https://github.com/mscipio/occiput.git
+    git clone https://github.com/mscipio/occiput-suite.git
 
-    python setup.py build install (***not sure if this works right now, please let me know if you try!***)
+    python setup.py build install
 
 
 Getting started
 ===============
 Examples and demos of the features of Occiput are in the /occiput/notebooks folder.
 To get started, install ``Python Jupyter`` and open the scripts in
-`/occiput/notebooks <https://github.com/spedemon/occiput/tree/master/occiput/notebooks>`_. The
-notebook `/occiput/notebooks/DOCUMENTATION.ipynb <https://github.com/spedemon/occiput/tree/master/occiput/notebooks/DOCUMENTATION.ipynb>`_ contains
-an index and short description of the notebooks.
+`/occiput_suite/notebooks <https://github.com/mscipio/occiput-suite/tree/master/occiput_suite/notebooks>`_. The
+notebook `/occiput_suite/notebooks/DOCUMENTATION.ipynb <https://github.com/mscipio/occiput-suite/blob/master/occiput_suite/notebooks/DOCUMENTATION.ipynb>`_ contains an index and short description of the notebooks.
 
 Website
 =======
-For more information see `occiput.io  <http://www.occiput.io/>`_.
+For more information see `occiput.io  <http://occiput.mgh.harvard.edu/>`_.
 
 
 Changelog
 =========
-For more information see `CHANGES.md  <https://github.com/mscipio/occiput/blob/master/CHANGES.md>`_
+For more information see `CHANGES.md  <https://github.com/mscipio/occiput-suite/blob/master/CHANGES.md>`_
 

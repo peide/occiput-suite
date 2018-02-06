@@ -2,5 +2,6 @@
 .DS_Store
 build
 dist
-occiput.egg-info
-occiput/notebooks/.ipynb_checkpoints
+occiput_suite/notebooks/.ipynb_checkpoints
+.idea/
+.git/
