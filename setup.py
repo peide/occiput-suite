@@ -38,7 +38,7 @@ test_matrices_module = Extension('occiput_suite.simplewrap.tests.test_matrices_c
 
 setup(
     name='occiput_suite',
-    version='0.2.0',
+    version='0.5.0',
     packages=['occiput_suite', 'occiput_suite.test', 'occiput_suite.ilang', 'occiput_suite.ilang.test',
               'occiput_suite.ilang.webgui', 'occiput_suite.ilang.examples', 'occiput_suite.NiftyPy',
               'occiput_suite.NiftyPy.test', 'occiput_suite.NiftyPy.NiftyRec', 'occiput_suite.NiftyPy.NiftyReg',
